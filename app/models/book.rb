@@ -6,4 +6,9 @@ class Book < ApplicationRecord
 
   belongs_to :publisher
   has_many :authors, through: :book_authors
+
+  validates :name, presence: true
+  validates :name, length: { maximum: 15 }
+  validates :price, numericality: { greater_than_or_equal_to: 0 }
+  # greater_than_or_equal_to: => 指定された値と等しいか、それよりも大きくなければならないことを指定する
 end
