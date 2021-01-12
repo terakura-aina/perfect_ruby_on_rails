@@ -11,4 +11,9 @@ class Book < ApplicationRecord
   validates :name, length: { maximum: 15 }
   validates :price, numericality: { greater_than_or_equal_to: 0 }
   # greater_than_or_equal_to: => 指定された値と等しいか、それよりも大きくなければならないことを指定する
+  validate do |book|
+    if book.name.include?("exercise")
+      book.errors[:name] << "「exercise」を含めることはできません。"
+    end
+  end
 end
