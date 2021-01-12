@@ -12,8 +12,29 @@ class Book < ApplicationRecord
   validates :price, numericality: { greater_than_or_equal_to: 0 }
   # greater_than_or_equal_to: => 指定された値と等しいか、それよりも大きくなければならないことを指定する
   validate do |book|
+  # 独自のメソッドの場合はvalidate
     if book.name.include?("exercise")
       book.errors[:name] << "「exercise」を含めることはできません。"
     end
+  end
+
+  before_validation do |book|
+    book.name = self.name.gsub(/CAT/) do |matched|
+      # gsubメソッドはマッチした全ての部分を特定の文字列に置き換えてくれる
+      "lovery #{matched}"
+    end
+  end
+
+  after_destroy do |book|
+    Rails.logger.info "Book is deleted: #{book.attributes.inspect}"
+  end
+
+  def high_price?
+    price >= 5000
+  end
+
+  after_destroy :if => :high_price? do |book|
+    Rails.logger.warn "Book with high price is deleted: #{book.attributes.inspect}"
+    Rails.logger.warn "Please check!!"
   end
 end
